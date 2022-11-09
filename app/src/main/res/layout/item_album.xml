@@ -12,7 +12,6 @@
     android:layout_margin="6dp"
     android:clickable="true"
     android:focusable="true"
-    android:focusableInTouchMode="true"
     tools:layout_width="198dp"
     tools:layout_height="wrap_content"
     >

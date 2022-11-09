@@ -8,5 +8,17 @@
     </plurals>
 
     <string name="something_went_wrong_label">Something went wrong. Please try again.</string>
+    <string name="empty_state_please_try_again">Please try again…</string>
+    <string name="empty_state_no_results_found">No results found!</string>
+
+    <string name="album_details_appbar_title">Album</string>
+    <plurals name="album_details_songs">
+        <item quantity="one">Song</item>
+        <item quantity="other">Songs</item>
+    </plurals>
+    <string name="album_attribute_downloadable_label">Downloadable</string>
+    <string name="album_attribute_streamable_label">Streamable</string>
+    <string name="album_details_artists_label">Artists</string>
+    <string name="album_details_release_date_label">Release Date</string>
 
 </resources>

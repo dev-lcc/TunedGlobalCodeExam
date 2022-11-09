@@ -152,7 +152,7 @@ dependencies {
     // Coroutine Flow Binding
     implementation(libs.flowbinding.core)
     implementation(libs.flowbinding.android)
-    implementation(libs.flowbinding.recyclerview)
+    implementation(libs.flowbinding.appcompat)
     implementation(libs.flowbinding.swiperefreshlayout)
 
     // Timber Log

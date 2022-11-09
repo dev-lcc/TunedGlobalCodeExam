@@ -77,7 +77,8 @@
                         android:layout_width="96dp"
                         android:layout_height="96dp"
                         android:layout_gravity="center_horizontal"
-                        app:srcCompat="@drawable/ic_library_music"
+                        app:srcCompat="@drawable/ic_error"
+                        app:tint="@color/primaryBlue"
                         />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -92,7 +93,7 @@
                         android:textAlignment="gravity"
                         android:textColor="@android:color/primary_text_light"
                         android:textSize="20sp"
-                        android:text="No results found!"
+                        android:text="@string/empty_state_no_results_found"
                         />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -107,7 +108,7 @@
                         android:textAlignment="gravity"
                         android:textColor="@android:color/black"
                         android:textSize="16sp"
-                        android:text="Please try again..."
+                        android:text="@string/empty_state_please_try_again"
                         />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>

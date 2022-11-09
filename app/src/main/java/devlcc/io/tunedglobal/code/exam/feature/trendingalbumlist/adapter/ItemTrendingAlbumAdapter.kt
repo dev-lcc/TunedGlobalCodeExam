@@ -240,7 +240,7 @@ class ItemTrendingAlbumAdapter(
             //
             // On Tap Action
             //
-            itemView.setOnClickListener { onItemTap?.invoke(item) }
+            binding.root.setOnClickListener { onItemTap?.invoke(item) }
         }
 
     }

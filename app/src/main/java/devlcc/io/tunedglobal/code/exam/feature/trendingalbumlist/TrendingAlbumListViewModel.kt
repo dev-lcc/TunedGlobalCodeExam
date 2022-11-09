@@ -16,7 +16,7 @@ class TrendingAlbumListViewModel(
         MutableStateFlow(TrendingAlbumListState.initial())
     val uiState: StateFlow<TrendingAlbumListState> = _uiState.asStateFlow()
 
-    private val _uiEffect: MutableSharedFlow<TrendingAlbumListEffect> = MutableSharedFlow()
+    private val _uiEffect: MutableSharedFlow<TrendingAlbumListEffect> = MutableSharedFlow(extraBufferCapacity = 4)
     val uiEffect: SharedFlow<TrendingAlbumListEffect> = _uiEffect.asSharedFlow()
 
     init {
@@ -31,12 +31,7 @@ class TrendingAlbumListViewModel(
 
     fun fetchMore() {
         viewModelScope.launch {
-//            (_uiState.value as? TrendingAlbumListState.Success)
-//                ?.let { state ->
-//                    if(state.hasMoreToFetch) {
-                        doFetchTrendingAlbums(refresh = false)
-//                    }
-//                }
+            doFetchTrendingAlbums(refresh = false)
         }
     }
 

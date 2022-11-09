@@ -10,6 +10,17 @@
         android:name="devlcc.io.tunedglobal.code.exam.feature.trendingalbumlist.TrendingAlbumListFragment"
         android:label="TrendingAlbumListFragment"
         tools:layout="@layout/fragment_trending_album_list"
+        >
+        <action
+            android:id="@+id/action_trendingAlbumListFragment_to_albumDetailsFragment"
+            app:destination="@id/albumDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/albumDetailsFragment"
+        android:name="devlcc.io.tunedglobal.code.exam.feature.albumdetails.AlbumDetailsFragment"
+        android:label="AlbumDetailsFragment"
+        tools:layout="@layout/fragment_album_details"
         />
 
 </navigation>

@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import devlcc.io.tunedglobal.code.exam.R
 import devlcc.io.tunedglobal.code.exam.common.coroutines.throttleFirst
 import devlcc.io.tunedglobal.code.exam.databinding.FragmentTrendingAlbumListBinding
+import devlcc.io.tunedglobal.code.exam.feature.albumdetails.AlbumDetailsFragment
 import devlcc.io.tunedglobal.code.exam.feature.trendingalbumlist.adapter.EndlessRecyclerViewScrollListener
 import devlcc.io.tunedglobal.code.exam.feature.trendingalbumlist.adapter.ItemTrendingAlbumAdapter
 import devlcc.io.tunedglobal.code.exam.model.Album
@@ -61,7 +63,17 @@ class TrendingAlbumListFragment : Fragment() {
 
         adapter = ItemTrendingAlbumAdapter(onItemTap = { which: Album ->
             Timber.d("onItemTap() -> which = $which")
-            // TODO:: On Tap
+            val albumId = which.albumID ?: return@ItemTrendingAlbumAdapter
+
+            // Attempt Navigate to Details Page
+            val navController = findNavController()
+            if (navController.currentDestination?.id == R.id.trendingAlbumListFragment) {
+                navController.navigate(
+                    R.id.action_trendingAlbumListFragment_to_albumDetailsFragment,
+                    AlbumDetailsFragment.createInputArgument(albumId = albumId),
+                )
+            }
+
         })
         binding.rvAlbums.adapter = adapter
 

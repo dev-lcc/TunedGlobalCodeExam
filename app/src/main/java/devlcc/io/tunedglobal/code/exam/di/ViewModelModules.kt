@@ -1,5 +1,6 @@
 package devlcc.io.tunedglobal.code.exam.di
 
+import devlcc.io.tunedglobal.code.exam.feature.albumdetails.AlbumDetailsViewModel
 import devlcc.io.tunedglobal.code.exam.feature.trendingalbumlist.TrendingAlbumListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
@@ -11,6 +12,13 @@ object ViewModelModules {
         viewModel {
             TrendingAlbumListViewModel(
                 getTrendingAlbumsUseCase = get(),
+            )
+        }
+
+        viewModel { (albumId: Long) ->
+            AlbumDetailsViewModel(
+                albumId = albumId,
+                albumsRepository = get(),
             )
         }
     }
