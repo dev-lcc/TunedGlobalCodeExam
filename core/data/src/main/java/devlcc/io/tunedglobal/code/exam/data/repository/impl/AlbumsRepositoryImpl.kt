@@ -13,18 +13,20 @@ import kotlinx.coroutines.withContext
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 class AlbumsRepositoryImpl(
     private val networkDatasource: AlbumsNetworkService
-): AlbumsRepository {
+) : AlbumsRepository {
 
     private var getTrendingAlbumsOffset: Long = INITIAL_OFFSET
+
     // Mutex to make writes to cached values thread-safe.
     private val trendingAlbumsMutex = Mutex()
+
     // Cached result
     private var trendingAlbums: List<Album> = emptyList()
 
     override suspend fun getTrendingAlbums(
         refresh: Boolean
     ): List<Album> {
-        if(refresh) {
+        if (refresh) {
             getTrendingAlbumsOffset = INITIAL_OFFSET
             // Thread-safe clear cached result
             trendingAlbumsMutex.withLock {
@@ -34,36 +36,32 @@ class AlbumsRepositoryImpl(
 
         val (metadata, result) = withContext(Dispatchers.IO) {
             networkDatasource.getTrendingAlbums(
-                offset = getTrendingAlbumsOffset,
-                count = COUNT
+                offset = getTrendingAlbumsOffset, count = COUNT
             )
         }
 
         // Update Current Offset(+= Fetched Count)
         this.getTrendingAlbumsOffset =
-            (metadata.offset ?: this.getTrendingAlbumsOffset) +
-                    (metadata.count ?: result.data.size).toLong()
+            (metadata.offset ?: this.getTrendingAlbumsOffset) + (metadata.count
+                ?: result.data.size).toLong()
         // Insanity Check, make sure offset will NOT exceed total count
-        val currentTotal = metadata.total
-            ?: (this.trendingAlbums.size + result.data.size).toLong()
-        if(this.getTrendingAlbumsOffset > currentTotal) {
+        val currentTotal = metadata.total ?: (this.trendingAlbums.size + result.data.size).toLong()
+        if (this.getTrendingAlbumsOffset > currentTotal) {
             this.getTrendingAlbumsOffset = currentTotal
         }
 
         // Thread-safe write to cached result
         trendingAlbumsMutex.withLock {
-            this.trendingAlbums += result.data.map { it.toModel() }
+            this.trendingAlbums = this.trendingAlbums + result.data.map { it.toModel() }
         }
 
         return trendingAlbumsMutex.withLock { this.trendingAlbums.distinctBy { it.albumID } }
     }
 
     // Cached Result
-    override suspend fun getAlbum(id: Long): Album =
-        withContext(Dispatchers.IO) {
-            networkDatasource.getAlbum(id)
-                .toModel()
-        }
+    override suspend fun getAlbum(id: Long): Album = withContext(Dispatchers.IO) {
+        networkDatasource.getAlbum(id).toModel()
+    }
 
     companion object {
         const val INITIAL_OFFSET = 1L

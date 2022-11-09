@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">TG Code Exam</string>
+
+    <string name="trending_album_list_appbar_title">@string/app_name</string>
+    <plurals name="trending_album_list_songs">
+        <item quantity="one">Song</item>
+        <item quantity="other">Songs</item>
+    </plurals>
+
+    <string name="something_went_wrong_label">Something went wrong. Please try again.</string>
+
 </resources>

@@ -24,12 +24,11 @@ class GetTrendingAlbumsUseCase(
             )
 
             return@flow
-        } else if (result == this@GetTrendingAlbumsUseCase.cachedResult) {
-            emit(GetTrendingAlbumsResult.NoMoreResults)
         } else {
             emit(
                 GetTrendingAlbumsResult.Success(
-                    data = result
+                    data = result,
+                    hasMoreResults = this@GetTrendingAlbumsUseCase.cachedResult == result
                 )
             )
 
@@ -57,18 +56,15 @@ sealed class GetTrendingAlbumsResult {
      * Operation success with data.
      */
     data class Success(
-        val data: List<Album>
+        val data: List<Album>,
+        // On next paginated fetch attempt, determine whether further results are available.
+        val hasMoreResults: Boolean,
     ) : GetTrendingAlbumsResult()
 
     /**
      * Upon refresh fetch, empty result.
      */
     object Empty : GetTrendingAlbumsResult()
-
-    /**
-     * Upon paginated fetch, no further results.
-     */
-    object NoMoreResults : GetTrendingAlbumsResult()
 
     /**
      * Error encountered.

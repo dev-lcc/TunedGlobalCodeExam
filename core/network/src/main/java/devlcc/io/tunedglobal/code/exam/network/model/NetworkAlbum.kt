@@ -35,11 +35,11 @@ data class NetworkAlbum(
     @SerialName("Translations") val translations: List<Translation> = emptyList(),
 ) {
 
-    @Serializable
+    @Serializable(with = AlbumType.Serializer::class)
     enum class AlbumType(val value: String) {
         Album("Album");
 
-        companion object : KSerializer<AlbumType> {
+        object Serializer : KSerializer<AlbumType> {
             override val descriptor: SerialDescriptor
                 get() {
                     return PrimitiveSerialDescriptor(
@@ -82,16 +82,17 @@ data class NetworkAlbum(
         @SerialName("ArtistTranslations") val artistTranslations: List<Translation> = emptyList()
     )
 
-    @Serializable
+    @Serializable(with = ContentLanguage.Serializer::class)
     enum class ContentLanguage(val value: String) {
-        English("ENG"),    // "ENG"
-        Dutch("NLD"),    // "NLD"
-        Hindu("HIN"),    // "HIN"
-        Latin("LAT"),    // "LAT"
-        Tagalog("TGL"),    // "TGL"
+        ENG("ENG"),    // "English"
+        NLD("NLD"),    // "Dutch/Netherland"
+        HIN("HIN"),    // "Hindu"
+        LAT("LAT"),    // "Latin"
+        TGL("TGL"),    // "Tagalog"
+        SPA("SPA"),    // "Spanish"
         ;
 
-        companion object : KSerializer<ContentLanguage?> {
+        object Serializer : KSerializer<ContentLanguage?> {
             override val descriptor: SerialDescriptor
                 get() {
                     return PrimitiveSerialDescriptor(
@@ -101,11 +102,11 @@ data class NetworkAlbum(
 
             override fun deserialize(decoder: Decoder): ContentLanguage? =
                 when (val value = decoder.decodeString()) {
-                    "ENG" -> English
-                    "NLD" -> Dutch
-                    "HIN" -> Hindu
-                    "LAT" -> Latin
-                    "TGL" -> Tagalog
+                    "ENG" -> ENG
+                    "NLD" -> NLD
+                    "HIN" -> HIN
+                    "LAT" -> LAT
+                    "TGL" -> TGL
                     else -> null
                 }
 
@@ -127,24 +128,24 @@ data class NetworkAlbum(
         @SerialName("Value") val value: String? = null,
     )
 
-    @Serializable
+    @Serializable(with = Language.Serializer::class)
     enum class Language(val value: String) {
-        English("ENG"),    // "ENG"
-        Japanese1("JA"),   // "JA"
-        Japanese2("JP"),   // "JP"
-        Korean1("KO"),     // "KO"
-        Korean2("KR"),     // "KR"
-        Greek("EL"),   // "EL"
-        Chinese1("CN"),   // "CN"
-        Chinese2("ZH"),   // "ZH"
-        Hindu("HI"),   // "HI"
-        Russian("RU"),   // "RU"
-        Thai("TH"),   // "TH"
-        Spanish("ES"),   // "ES"
-        Dutch("NL"),   // "NL"
+        EN("EN"),    // "English"
+        JA("JA"),   // "Japanese1"
+        JP("JP"),   // "Japanese2"
+        KO("KO"),     // "Korean1"
+        KR("KR"),     // "Korean2"
+        EL("EL"),   // "Greek"
+        CN("CN"),   // "Chinese1"
+        ZH("ZH"),   // "Chinese2"
+        HI("HI"),   // "Hindu"
+        RU("RU"),   // "Russian"
+        TH("TH"),   // "Thai"
+        ES("ES"),   // "Spanish"
+        NL("NL"),   // "Dutch"
         ;
 
-        companion object : KSerializer<Language?> {
+        object Serializer : KSerializer<Language?> {
             override val descriptor: SerialDescriptor
                 get() {
                     return PrimitiveSerialDescriptor(
@@ -154,19 +155,19 @@ data class NetworkAlbum(
 
             override fun deserialize(decoder: Decoder): Language? =
                 when (decoder.decodeString()) {
-                    "EN" -> English
-                    "JA" -> Japanese1
-                    "JP" -> Japanese2
-                    "KO" -> Korean1
-                    "KR" -> Korean2
-                    "EL" -> Greek
-                    "CN" -> Chinese1
-                    "ZH" -> Chinese2
-                    "HI" -> Hindu
-                    "RU" -> Russian
-                    "TH" -> Thai
-                    "ES" -> Spanish
-                    "NL" -> Dutch
+                    "EN" -> EN
+                    "JA" -> JA
+                    "JP" -> JP
+                    "KO" -> KO
+                    "KR" -> KR
+                    "EL" -> EL
+                    "CN" -> CN
+                    "ZH" -> ZH
+                    "HI" -> HI
+                    "RU" -> RU
+                    "TH" -> TH
+                    "ES" -> ES
+                    "NL" -> NL
                     else -> null
                 }
 

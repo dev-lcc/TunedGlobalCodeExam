@@ -52,6 +52,7 @@ data class Album(
         Hindu("HIN"),    // "HIN"
         Latin("LAT"),    // "LAT"
         Tagalog("TGL"),    // "TGL"
+        Spanish("SPA"),    // "SPA"
     }
 
     @Parcelize

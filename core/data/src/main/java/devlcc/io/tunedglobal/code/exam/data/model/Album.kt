@@ -47,11 +47,12 @@ fun NetworkAlbum.PrimaryRelease.toModel(): Album.PrimaryRelease =
 
 fun NetworkAlbum.ContentLanguage.toModel(): Album.ContentLanguage =
     when(this) {
-        NetworkAlbum.ContentLanguage.English -> Album.ContentLanguage.English
-        NetworkAlbum.ContentLanguage.Dutch -> Album.ContentLanguage.Dutch
-        NetworkAlbum.ContentLanguage.Hindu -> Album.ContentLanguage.Hindu
-        NetworkAlbum.ContentLanguage.Latin -> Album.ContentLanguage.Latin
-        NetworkAlbum.ContentLanguage.Tagalog -> Album.ContentLanguage.Tagalog
+        NetworkAlbum.ContentLanguage.ENG -> Album.ContentLanguage.English
+        NetworkAlbum.ContentLanguage.NLD -> Album.ContentLanguage.Dutch
+        NetworkAlbum.ContentLanguage.HIN -> Album.ContentLanguage.Hindu
+        NetworkAlbum.ContentLanguage.LAT -> Album.ContentLanguage.Latin
+        NetworkAlbum.ContentLanguage.TGL -> Album.ContentLanguage.Tagalog
+        NetworkAlbum.ContentLanguage.SPA -> Album.ContentLanguage.Spanish
     }
 
 fun NetworkAlbum.Label.toModel(): Album.Label =
@@ -68,19 +69,19 @@ fun NetworkAlbum.Translation.toModel(): Album.Translation =
 
 fun NetworkAlbum.Language.toModel(): Album.Language =
     when(this) {
-        NetworkAlbum.Language.English -> Album.Language.English
-        NetworkAlbum.Language.Japanese1 -> Album.Language.Japanese1
-        NetworkAlbum.Language.Japanese2 -> Album.Language.Japanese2
-        NetworkAlbum.Language.Korean1 -> Album.Language.Korean1
-        NetworkAlbum.Language.Korean2 -> Album.Language.Korean2
-        NetworkAlbum.Language.Greek -> Album.Language.Greek
-        NetworkAlbum.Language.Chinese1 -> Album.Language.Chinese1
-        NetworkAlbum.Language.Chinese2 -> Album.Language.Chinese2
-        NetworkAlbum.Language.Hindu -> Album.Language.Hindu
-        NetworkAlbum.Language.Russian -> Album.Language.Russian
-        NetworkAlbum.Language.Thai -> Album.Language.Thai
-        NetworkAlbum.Language.Spanish -> Album.Language.Spanish
-        NetworkAlbum.Language.Dutch -> Album.Language.Dutch
+        NetworkAlbum.Language.EN -> Album.Language.English
+        NetworkAlbum.Language.JA -> Album.Language.Japanese1
+        NetworkAlbum.Language.JP -> Album.Language.Japanese2
+        NetworkAlbum.Language.KO -> Album.Language.Korean1
+        NetworkAlbum.Language.KR -> Album.Language.Korean2
+        NetworkAlbum.Language.EL -> Album.Language.Greek
+        NetworkAlbum.Language.CN -> Album.Language.Chinese1
+        NetworkAlbum.Language.ZH -> Album.Language.Chinese2
+        NetworkAlbum.Language.HI -> Album.Language.Hindu
+        NetworkAlbum.Language.RU -> Album.Language.Russian
+        NetworkAlbum.Language.TH -> Album.Language.Thai
+        NetworkAlbum.Language.ES -> Album.Language.Spanish
+        NetworkAlbum.Language.NL -> Album.Language.Dutch
     }
 
 fun NetworkAlbum.Volume.toModel(): Album.Volume =
