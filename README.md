@@ -21,6 +21,9 @@
 * Dependency Injection using Koin 2.0 (https://insert-koin.io/)
 * App Project was constructed following Single Activity App pattern.
     * Using 1 Activity to host NavigationView which manages the entire Navigation Graph.
+* Unit Test implementation targeting each *ViewModel classes using ![cashapp/Turbine](https://github.com/cashapp/turbine) test framework.
+   - Please see `TrendingAlbumListViewModelTest.kt` and `AlbumDetailsViewModelTest.kt` for unit test implementation.
+   - (TODO: Provide unit test implementation on data layer and network layer for full coverage)
 
 ## Navigation Graph
 ![Navigation Graph](https://user-images.githubusercontent.com/6966201/201339649-a8bbf92e-31b0-440b-b557-0e7e903b24c7.png)
