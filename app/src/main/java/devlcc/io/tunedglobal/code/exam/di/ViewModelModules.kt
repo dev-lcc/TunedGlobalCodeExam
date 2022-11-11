@@ -18,7 +18,7 @@ object ViewModelModules {
         viewModel { (albumId: Long) ->
             AlbumDetailsViewModel(
                 albumId = albumId,
-                albumsRepository = get(),
+                getAlbumDetailsUseCase = get(),
             )
         }
     }

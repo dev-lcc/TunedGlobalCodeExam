@@ -13,15 +13,17 @@ class TrendingAlbumListViewModel(
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<TrendingAlbumListState> =
-        MutableStateFlow(TrendingAlbumListState.initial())
-    val uiState: StateFlow<TrendingAlbumListState> = _uiState.asStateFlow()
+        MutableStateFlow(TrendingAlbumListState.Loading(refresh = true))
+    val uiState: StateFlow<TrendingAlbumListState> = _uiState
+        .onSubscription { doFetchTrendingAlbums(refresh = true) }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000L),
+            TrendingAlbumListState.Loading(refresh = true)
+        )
 
-    private val _uiEffect: MutableSharedFlow<TrendingAlbumListEffect> = MutableSharedFlow(extraBufferCapacity = 4)
+    private val _uiEffect: MutableSharedFlow<TrendingAlbumListEffect> = MutableSharedFlow()
     val uiEffect: SharedFlow<TrendingAlbumListEffect> = _uiEffect.asSharedFlow()
-
-    init {
-        this.refresh()
-    }
 
     fun refresh() {
         viewModelScope.launch {
@@ -40,10 +42,8 @@ class TrendingAlbumListViewModel(
                 _uiState.update {
                     when (result) {
                         is GetTrendingAlbumsResult.Loading -> TrendingAlbumListState.Loading(refresh)
-                        is GetTrendingAlbumsResult.Success -> TrendingAlbumListState.Success(
-                            albums = result.data,
-                            hasMoreToFetch = result.hasMoreResults,
-                        )
+                        is GetTrendingAlbumsResult.Success ->
+                            TrendingAlbumListState.Success(albums = result.data)
                         is GetTrendingAlbumsResult.Empty -> TrendingAlbumListState.Empty
                         is GetTrendingAlbumsResult.Error -> TrendingAlbumListState.Empty.also {
                                 // Emit Error
@@ -67,21 +67,13 @@ sealed class TrendingAlbumListState {
     /**
      * UI State to which albums were successfully fetched.
      */
-    data class Success(
-        val albums: List<Album>,
-        // [true] if there are more item(s) to fetch, hence, enabling intercept on-scroll bottom. Otherwise, [false].
-        val hasMoreToFetch: Boolean,
-    ) : TrendingAlbumListState()
+    data class Success(val albums: List<Album>) : TrendingAlbumListState()
 
     /**
      * UI State to which initial fetch is empty.
      * - If encountered error 404, repository has already handled it, thus, returning an empty list.
      */
     object Empty : TrendingAlbumListState()
-
-    companion object {
-        fun initial(): TrendingAlbumListState = Loading(refresh = true)
-    }
 
 }
 

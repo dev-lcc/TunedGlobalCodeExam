@@ -99,6 +99,7 @@ dependencies {
 
     // Dependencies for local unit tests
     testImplementation(libs.bundles.unitTest)   // exclude group: 'org.mockito'
+    testImplementation(libs.turbine)   // exclude group: 'org.mockito'
 
     // Android Testing Support Library's runner and rules
     androidTestImplementation(libs.androidx.test.runner)

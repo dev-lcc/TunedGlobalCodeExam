@@ -1,29 +1,28 @@
 package devlcc.io.tunedglobal.code.exam.feature.albumdetails
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import devlcc.io.tunedglobal.code.exam.data.repository.AlbumsRepository
+import devlcc.io.tunedglobal.code.exam.domain.usecase.GetAlbumDetailsResult
+import devlcc.io.tunedglobal.code.exam.domain.usecase.GetAlbumDetailsUseCase
 import devlcc.io.tunedglobal.code.exam.model.Artist
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class AlbumDetailsViewModel(
     private val albumId: Long,
-    private val albumsRepository: AlbumsRepository,
+    private val getAlbumDetailsUseCase: GetAlbumDetailsUseCase,
 ) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<AlbumDetailsState> =
-        MutableStateFlow(AlbumDetailsState.initial())
-    val uiState: StateFlow<AlbumDetailsState> = _uiState.asStateFlow()
+    private val _uiState: MutableStateFlow<AlbumDetailsState> = MutableStateFlow(AlbumDetailsState.Loading)
+    val uiState: StateFlow<AlbumDetailsState> = _uiState
+        .onSubscription { doFetchAlbumDetails(albumId) }
+        .stateIn(
+            viewModelScope, SharingStarted.WhileSubscribed(5000L), AlbumDetailsState.Loading
+        )
 
     private val _uiEffect: MutableSharedFlow<AlbumDetailsEffect> =
-        MutableSharedFlow(extraBufferCapacity = 4)
+        MutableSharedFlow()
     val uiEffect: SharedFlow<AlbumDetailsEffect> = _uiEffect.asSharedFlow()
-
-    init {
-        this.refresh()
-    }
 
     fun refresh() {
         viewModelScope.launch {
@@ -32,39 +31,38 @@ class AlbumDetailsViewModel(
     }
 
     private suspend fun doFetchAlbumDetails(id: Long) {
+        getAlbumDetailsUseCase(id)
+            .collect { result ->
+                _uiState.update {
+                    when (result) {
+                        is GetAlbumDetailsResult.Loading -> AlbumDetailsState.Loading
+                        is GetAlbumDetailsResult.Success -> AlbumDetailsState.Success(
+                            appBarTitle = result.data.name ?: "",
+                            banner = result.data.primaryRelease?.image?.let { imageUrl ->
+                                AlbumBanner.Image(imageUrl)
+                            } ?: AlbumBanner.Placeholder,
+                            attributes = mutableSetOf<AlbumAttributes>().apply {
+                                val songCount = result.data.primaryRelease?.trackIDS?.size ?: 0
+                                if (songCount > 0) add(AlbumAttributes.SongCount(songCount))
 
-        flow<AlbumDetailsState> {
-            val result = albumsRepository.getAlbum(id)
+                                val isDownloadable = result.data.primaryRelease?.allowDownload == true
+                                if (isDownloadable) add(AlbumAttributes.Downloadable)
 
-            emit(
-                AlbumDetailsState.Success(
-                    appBarTitle = result.name ?: "",
-                    banner = result.primaryRelease?.image?.let { imageUrl ->
-                        AlbumBanner.Image(imageUrl)
-                    } ?: AlbumBanner.Placeholder,
-                    attributes = mutableSetOf<AlbumAttributes>().apply {
-                        val songCount = result.primaryRelease?.trackIDS?.size ?: 0
-                        if (songCount > 0) add(AlbumAttributes.SongCount(songCount))
-
-                        val isDownloadable = result.primaryRelease?.allowDownload == true
-                        if (isDownloadable) add(AlbumAttributes.Downloadable)
-
-                        val isStreamable = result.primaryRelease?.allowStream == true
-                        if (isStreamable) add(AlbumAttributes.Streamable)
-                    },
-                    recordLabel = result.primaryRelease?.label?.name,
-                    copyright = result.primaryRelease?.copyright,
-                    artists = result.artists,
-                    releaseDate = result.primaryRelease?.releaseDate,
-                )
-            )
-        }.onStart { emit(AlbumDetailsState.Loading) }.retry(3).catch {
-            emit(AlbumDetailsState.Error)
-        }.collect { result ->
-            _uiState.update { result }
-        }
+                                val isStreamable = result.data.primaryRelease?.allowStream == true
+                                if (isStreamable) add(AlbumAttributes.Streamable)
+                            },
+                            recordLabel = result.data.primaryRelease?.label?.name,
+                            copyright = result.data.primaryRelease?.copyright,
+                            artists = result.data.artists,
+                            releaseDate = result.data.primaryRelease?.releaseDate,
+                        )
+                        is GetAlbumDetailsResult.Error -> AlbumDetailsState.Error
+                    }
+                }
+            }
 
     }
+
 
 }
 
@@ -83,10 +81,6 @@ sealed class AlbumDetailsState {
     ) : AlbumDetailsState()
 
     object Error : AlbumDetailsState()
-
-    companion object {
-        fun initial() = Loading
-    }
 }
 
 sealed class AlbumBanner {

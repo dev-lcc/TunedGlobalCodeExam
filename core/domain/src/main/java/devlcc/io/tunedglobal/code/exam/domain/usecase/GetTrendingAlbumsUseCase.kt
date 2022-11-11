@@ -2,10 +2,7 @@ package devlcc.io.tunedglobal.code.exam.domain.usecase
 
 import devlcc.io.tunedglobal.code.exam.data.repository.AlbumsRepository
 import devlcc.io.tunedglobal.code.exam.model.Album
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.retryWhen
+import kotlinx.coroutines.flow.*
 
 class GetTrendingAlbumsUseCase(
     private val albumsRepository: AlbumsRepository
@@ -14,7 +11,6 @@ class GetTrendingAlbumsUseCase(
     private var cachedResult: List<Album> = emptyList()
 
     operator fun invoke(refresh: Boolean = false): Flow<GetTrendingAlbumsResult> = flow {
-        emit(GetTrendingAlbumsResult.Loading(refresh))
 
         val result = albumsRepository.getTrendingAlbums(refresh)
 
@@ -22,19 +18,16 @@ class GetTrendingAlbumsUseCase(
             emit(
                 GetTrendingAlbumsResult.Empty
             )
-
-            return@flow
         } else {
             emit(
                 GetTrendingAlbumsResult.Success(
-                    data = result,
-                    hasMoreResults = this@GetTrendingAlbumsUseCase.cachedResult == result
+                    data = result
                 )
             )
 
             this@GetTrendingAlbumsUseCase.cachedResult = result
         }
-    }.retryWhen { _, attempt ->
+    }.onStart { emit(GetTrendingAlbumsResult.Loading(refresh)) }.retryWhen { _, attempt ->
         attempt < 3
     }.catch { err ->
         // EMIT Error
@@ -56,9 +49,7 @@ sealed class GetTrendingAlbumsResult {
      * Operation success with data.
      */
     data class Success(
-        val data: List<Album>,
-        // On next paginated fetch attempt, determine whether further results are available.
-        val hasMoreResults: Boolean,
+        val data: List<Album>
     ) : GetTrendingAlbumsResult()
 
     /**
