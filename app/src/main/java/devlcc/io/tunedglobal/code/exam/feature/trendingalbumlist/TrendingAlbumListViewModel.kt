@@ -15,7 +15,6 @@ class TrendingAlbumListViewModel(
     private val _uiState: MutableStateFlow<TrendingAlbumListState> =
         MutableStateFlow(TrendingAlbumListState.Loading(refresh = true))
     val uiState: StateFlow<TrendingAlbumListState> = _uiState
-        .onSubscription { doFetchTrendingAlbums(refresh = true) }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5_000L),
@@ -24,6 +23,12 @@ class TrendingAlbumListViewModel(
 
     private val _uiEffect: MutableSharedFlow<TrendingAlbumListEffect> = MutableSharedFlow()
     val uiEffect: SharedFlow<TrendingAlbumListEffect> = _uiEffect.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            doFetchTrendingAlbums(refresh = true)
+        }
+    }
 
     fun refresh() {
         viewModelScope.launch {
@@ -39,21 +44,21 @@ class TrendingAlbumListViewModel(
 
     private suspend fun doFetchTrendingAlbums(refresh: Boolean) {
         getTrendingAlbumsUseCase(refresh).collect { result ->
-                _uiState.update {
-                    when (result) {
-                        is GetTrendingAlbumsResult.Loading -> TrendingAlbumListState.Loading(refresh)
-                        is GetTrendingAlbumsResult.Success ->
-                            TrendingAlbumListState.Success(albums = result.data)
-                        is GetTrendingAlbumsResult.Empty -> TrendingAlbumListState.Empty
-                        is GetTrendingAlbumsResult.Error -> TrendingAlbumListState.Empty.also {
-                                // Emit Error
-                                _uiEffect.emit(
-                                    TrendingAlbumListEffect.ErrorFetchTrendingAlbums
-                                )
-                            }
+            _uiState.update {
+                when (result) {
+                    is GetTrendingAlbumsResult.Loading -> TrendingAlbumListState.Loading(refresh)
+                    is GetTrendingAlbumsResult.Success ->
+                        TrendingAlbumListState.Success(albums = result.data)
+                    is GetTrendingAlbumsResult.Empty -> TrendingAlbumListState.Empty
+                    is GetTrendingAlbumsResult.Error -> TrendingAlbumListState.Empty.also {
+                        // Emit Error
+                        _uiEffect.emit(
+                            TrendingAlbumListEffect.ErrorFetchTrendingAlbums
+                        )
                     }
                 }
             }
+        }
     }
 
 }
